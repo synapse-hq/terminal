@@ -1,16 +1,5 @@
-import {
-  FormControl,
-  FormLabel,
-  Input,
-  FormErrorMessage,
-  Button,
-  Link,
-  Flex,
-  Box,
-  Heading,
-} from '@chakra-ui/react';
-
-import { Field, Form, Formik, FormikValues } from 'formik';
+import FormTemplate from '@/comps/FormTemplate';
+import { FormikValues } from 'formik';
 
 const SingUp = () => {
   const validateUsername = (value: string) => {
@@ -31,62 +20,19 @@ const SingUp = () => {
     return error;
   }
 
-  return (
-    <Flex width='full' align='center' justifyContent='center'>
-      <Box p={4} width={600}>
-        <Box textAlign="center" p={10}>
-          <Heading>Sign Up</Heading>
-        </Box>
-        <Box p={100} borderWidth={1} borderRadius={8} boxShadow="lg">
-          <Formik
-            initialValues={{ username: '', password: '' }}
-            onSubmit={(values, actions) => {
-              actions.setSubmitting(false);
-              console.log(values);
-              console.log('submitted!');
-            }}
-          >
-            {(props) => (
-              <Form>
-                <Field name='username' validate={validateUsername}>
-                  {({ field, form }: FormikValues) => (
-                    <FormControl isInvalid={form.errors.username && form.touched.username}>
-                      <FormLabel>Username</FormLabel>
-                      <Input {...field} placeholder='username' />
-                      <FormErrorMessage>{form.errors.username}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-                <Field name='password' validate={validatePassword}>
-                  {({ field, form }: FormikValues) => (
-                    <FormControl isInvalid={form.errors.password && form.touched.password} mt={6}>
-                      <FormLabel>Password</FormLabel>
-                      <Input {...field} placeholder='*********' type='password' />
-                      <FormErrorMessage>{form.errors.password}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-                <Button
-                  mt={10}
-                  mb={10}
-                  width='full'
-                  colorScheme='blue'
-                  isLoading={props.isSubmitting}
-                  type='submit'
-                >
-                  Submit
-                </Button>
+  const handleFormSubmit = (values: FormikValues, actions: FormikValues) => {
+    actions.setSubmitting(false);
+    console.log(values);
+    console.log('submitted!');
+  }
 
-                <div>
-                  <p style={{ display: 'inline-block' }}>Already have an account?</p>
-                  <Link href='/sign-in' width='full' ml={2} color='gray'>Sign In</Link>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </Box>
-      </Box>
-    </Flex>
+  return (
+    <FormTemplate
+      title='Sign Up'
+      validateUsername={validateUsername}
+      validatePassword={validatePassword}
+      handleFormSubmit={handleFormSubmit}
+    />
   )
 };
 
