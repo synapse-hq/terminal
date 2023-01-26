@@ -10,7 +10,7 @@ import {
   Heading,
 } from '@chakra-ui/react';
 
-import { Field, Form, Formik, FormikValues, FormikHelpers } from 'formik';
+import { Field, Form, Formik, FormikValues } from 'formik';
 
 type Props = {
   title: string,
