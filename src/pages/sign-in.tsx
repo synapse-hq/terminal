@@ -1,4 +1,4 @@
-import FormTemplate from '@/comps/FormTemplate';
+import FormTemplate from '@/components/FormTemplate';
 import { FormikValues } from 'formik';
 
 const SignIn = () => {
