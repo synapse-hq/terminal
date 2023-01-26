@@ -55,7 +55,7 @@ const FormTemplate = ({ title, validateUsername, validatePassword, handleFormSub
                   mt={10}
                   mb={10}
                   width='full'
-                  colorScheme='blue'
+                  colorScheme='purple'
                   isLoading={props.isSubmitting}
                   type='submit'
                 >
