@@ -1,69 +1,93 @@
-import type { AppProps } from 'next/app';
-
 import {
   FormControl,
   FormLabel,
   Input,
   FormErrorMessage,
-  Button
+  Button,
+  Link,
+  Flex,
+  Box,
+  Heading,
 } from '@chakra-ui/react';
 
-import { useState } from 'react';
-
+import { Field, Form, Formik, FormikValues } from 'formik';
 
 const SingUp = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [usernameErrorMessage, setUsernameErrorMessage] = useState('');
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
-
-  const handleUsernameChange = () => {
-    setUsername(username);
-
-    if (username.length === 0) {
-      setUsernameErrorMessage('Username is required.')
-    } else {
-      setUsernameErrorMessage('');
+  const validateUsername = (value: string) => {
+    let error;
+    if (!value) {
+      error = 'Username is required';
     }
-  };
 
-  const handlePasswordChange = () => {
-    setPassword(password);
-
-    if (password.length === 0) {
-      setPasswordErrorMessage('Password is required');
-    } else {
-      setPasswordErrorMessage('');
-    }
-  };
-
-  const handleFormSubmit = event => {
-    event.preventDefault();
-
-    console.log("Form Submitted!");
+    return error;
   }
 
+  const validatePassword = (value: string) => {
+    let error;
+    if (!value) {
+      error = 'Password is required';
+    }
+
+    return error;
+  }
 
   return (
-    <div>
-      <h1>Sign Up</h1>
+    <Flex width='full' align='center' justifyContent='center'>
+      <Box p={4} width={600}>
+        <Box textAlign="center" p={10}>
+          <Heading>Sign Up</Heading>
+        </Box>
+        <Box p={100} borderWidth={1} borderRadius={8} boxShadow="lg">
+          <Formik
+            initialValues={{ username: '', password: '' }}
+            onSubmit={(values, actions) => {
+              actions.setSubmitting(false);
+              console.log(values);
+              console.log('submitted!');
+            }}
+          >
+            {(props) => (
+              <Form>
+                <Field name='username' validate={validateUsername}>
+                  {({ field, form }: FormikValues) => (
+                    <FormControl isInvalid={form.errors.username && form.touched.username}>
+                      <FormLabel>Username</FormLabel>
+                      <Input {...field} placeholder='username' />
+                      <FormErrorMessage>{form.errors.username}</FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
+                <Field name='password' validate={validatePassword}>
+                  {({ field, form }: FormikValues) => (
+                    <FormControl isInvalid={form.errors.password && form.touched.password} mt={6}>
+                      <FormLabel>Password</FormLabel>
+                      <Input {...field} placeholder='*********' type='password' />
+                      <FormErrorMessage>{form.errors.password}</FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
+                <Button
+                  mt={10}
+                  mb={10}
+                  width='full'
+                  colorScheme='blue'
+                  isLoading={props.isSubmitting}
+                  type='submit'
+                >
+                  Submit
+                </Button>
 
-      <form onSubmit={handleFormSubmit}>
-        <FormControl isRequired>
-          <FormLabel>Username</FormLabel>
-          <Input type='text' onChange={handleUsernameChange} />
-          <FormErrorMessage>{usernameErrorMessage}</FormErrorMessage>
-        </FormControl>
-        <FormControl isRequired>
-          <FormLabel>Password</FormLabel>
-          <Input type='text' onChange={handlePasswordChange} />
-          <FormErrorMessage>{passwordErrorMessage}</FormErrorMessage>
-        </FormControl>
-        <Button type='submit'>Submit</Button>
-      </form>
-    </div>
-  );
-
+                <div>
+                  <p style={{ display: 'inline-block' }}>Already have an account?</p>
+                  <Link href='/sign-in' width='full' ml={2} color='gray'>Sign In</Link>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </Box>
+      </Box>
+    </Flex>
+  )
 };
 
 export default SingUp;
