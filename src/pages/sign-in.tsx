@@ -45,7 +45,7 @@ const SignIn = () => {
           }
         }
 
-        router.push(`/dashboard/${data.id}`);
+        router.push(`/dashboard/${data.username}`);
       }).catch(error => {
         console.log(error);
       });
