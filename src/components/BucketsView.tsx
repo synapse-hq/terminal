@@ -20,7 +20,10 @@ const BucketsView = (props: BucketsViewProps) => {
     )
   } else {
     return (
-      <BucketsTable></BucketsTable>
+        <Box>
+          <BrandButton type="secondary">Create a Bucket</BrandButton>
+          <BucketsTable></BucketsTable>
+        </Box>
     )
   }
 
