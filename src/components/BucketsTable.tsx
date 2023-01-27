@@ -1,10 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import DataTable from "./BucketDataTable";
-import { type Bucket } from './types'
-
-const defaultData: Bucket[] = [
-  { name: "bucket1", owner: "yusuf", updatedAt: new Date().toDateString() },
-];
+import { type Bucket } from './types';
+import { useEffect, useState } from 'react';
 
 const columnHelper = createColumnHelper<Bucket>();
 
@@ -23,10 +20,20 @@ const columns = [
   }),
 ];
 
-
 const BucketsTable = () => {
+  const [buckets, setBuckets] = useState([]);
+
+  useEffect(() => {
+    fetch(`https://bruinooge.dev/api/buckets/mykolas555`, { method: 'GET' })
+      .then(response => {
+        return response.json();
+      }).then(data => {
+        setBuckets(data);
+      });
+  }, [])
+
   return (
-    <DataTable columns={columns} data={defaultData}></DataTable>
+    <DataTable columns={columns} data={buckets}></DataTable>
   )
 }
 

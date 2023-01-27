@@ -151,6 +151,10 @@ interface MobileProps extends FlexProps {
   onOpen: () => void;
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+  const handleSignOut = () => {
+    fetch('https://bruinooge.dev/api/users/logout', { method: 'POST', credentials: 'include' })
+  }
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -216,7 +220,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               <MenuItem>Settings</MenuItem>
               <MenuItem>Billing</MenuItem>
               <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
+              <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
             </MenuList>
           </Menu>
         </Flex>

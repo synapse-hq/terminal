@@ -12,7 +12,7 @@ const VIEWS = {
 
 const Dashboard = () => {
   const [currentView, setCurrentView] = useState(VIEWS.buckets);
-  const [buckets, setBuckets] = useState([{ name: 'requestbin1', owner: 'yusuf', updatedAt: new Date().toDateString(), events: []}]);
+  const [buckets, setBuckets] = useState([{ name: 'requestbin1', owner: 'yusuf', updatedAt: new Date().toDateString(), events: [] }]);
 
   if (currentView == VIEWS.buckets) {
     return (

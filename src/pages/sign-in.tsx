@@ -1,9 +1,12 @@
 import FormTemplate from '@/components/FormTemplate';
 import { FormikValues } from 'formik';
 import { useRouter } from 'next/router';
+import AppContext from '../components/AppContext';
+import { useContext, useState } from 'react';
 
 const SignIn = () => {
   const router = useRouter();
+  const context = useContext(AppContext);
 
   const validateUsername = (value: string): string | undefined => {
     let error;
@@ -27,7 +30,7 @@ const SignIn = () => {
     actions.setSubmitting(false);
 
     let body = JSON.stringify({ username: values.username, passwordHash: values.password });
-    fetch('http://localhost:3001/api/users/login',
+    fetch('https://bruinooge.dev/api/users/login',
       { method: 'POST', headers: { 'content-type': 'application/json' }, body })
       .then(response => {
         return response.json();
@@ -45,6 +48,7 @@ const SignIn = () => {
           }
         }
 
+        // context.setSession(data);
         router.push(`/dashboard/${data.username}`);
       }).catch(error => {
         console.log(error);

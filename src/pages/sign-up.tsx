@@ -29,7 +29,7 @@ const SingUp = () => {
     actions.setSubmitting(false);
 
     let body = JSON.stringify({ username: values.username, passwordHash: values.password });
-    fetch('http://localhost:3001/api/users/new',
+    fetch('https://bruinooge.dev/api/users',
       { method: 'POST', headers: { 'content-type': 'application/json' }, body })
       .then(response => {
         return response.json();
