@@ -12,6 +12,8 @@ import {
 
 import { Field, Form, Formik, FormikValues } from 'formik';
 
+import Logo from './Logo';
+
 type Props = {
   title: string,
   validateUsername: (value: string) => string | undefined,
@@ -23,6 +25,11 @@ const FormTemplate = ({ title, validateUsername, validatePassword, handleFormSub
   return (
     <Flex width='full' align='center' justifyContent='center'>
       <Box p={4} width={600}>
+        <Box>
+          <Link href='/' style={{ textDecoration: 'none' }} >
+            <Logo></Logo>
+          </Link>
+        </Box>
         <Box textAlign="center" p={10}>
           <Heading>{title}</Heading>
         </Box>
