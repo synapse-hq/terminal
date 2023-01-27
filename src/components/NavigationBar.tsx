@@ -31,7 +31,7 @@ const NavigationBar: React.FC = () => {
           <Flex justify="space-between" flex="1">
             <HStack as="ul" listStyleType="none"></HStack>
             <HStack spacing="4">
-              <NavLink link="#signin">Sign in</NavLink>
+              <NavLink link="sign-in">Sign in</NavLink>
               <NextLink href="#" passHref>
                 <Button
                   as="a"
