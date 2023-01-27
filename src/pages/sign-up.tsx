@@ -18,6 +18,8 @@ const SingUp = () => {
     let error;
     if (!value) {
       error = 'Password is required';
+    } else if (value.length < 5) {
+      error = 'Password must be at least 5 characters long.'
     }
 
     return error;
