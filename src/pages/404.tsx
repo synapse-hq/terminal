@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Box, Heading, Text, Button } from "@chakra-ui/react";
+import BrandButton from "src/components/BrandButton";
 
 export default function NotFound() {
   return (
@@ -21,9 +22,7 @@ export default function NotFound() {
       </Text>
 
       <Link href="/">
-        <Button colorScheme="teal" bg="purple" color="white" variant="solid">
-          Go to Home
-        </Button>
+        <BrandButton type="secondary">Go to Home</BrandButton>
       </Link>
     </Box>
   );
