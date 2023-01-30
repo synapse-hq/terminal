@@ -15,9 +15,20 @@ import {
 } from "@chakra-ui/react";
 import { type Bucket } from "./types";
 
-interface BucketViewProps {
-  bucket: Bucket;
-}
+import Link from 'next/link';
+import { useState, useEffect } from "react"
+import bucketsContext from "@/context/buckets";
+import axios from "axios"
+
+const domain = "https://terminal.diegohernandezramirez.dev/api/"
+
+import useWebSocket from 'react-use-websocket';
+const WS_URL = 'wss://terminal.diegohernandezramirez.dev/api/socket/buckets';
+
+
+// interface BucketViewProps {
+//   bucket: Bucket;
+// }
 
 const Inspector = ({ events }: any) => {
   if (events.length === 0) {
@@ -29,14 +40,26 @@ const Inspector = ({ events }: any) => {
     );
   }
 
+  const formatEvent = (event: any) => {
+    const  {method, path, query, clientIp} = event
+    let eventData = `method: ${method} | path: ${path} | source: ${clientIp}`
+    return eventData
+  }
+
+  console.log("EVENTS", events)
   return (
+
     <VStack bg="whiteAlpha.300">
-      <Text>Show events</Text>
+      {events.map((event: any) => 
+        <li>
+          {formatEvent(event)}
+        </li>
+      )}
     </VStack>
   );
 };
 
-const BucketInfo = ({ bucket }: any) => {
+const BucketInfo = ({subdomain}: {subdomain: string}) => {
   return (
     <Card width="100%">
       <CardHeader>
@@ -46,10 +69,10 @@ const BucketInfo = ({ bucket }: any) => {
         <Stack divider={<StackDivider />} spacing="4">
           <Box>
             <Heading size="xs" textTransform="uppercase">
-              Bucket URL
+              {subdomain}
             </Heading>
             <Text pt="2" fontSize="sm">
-              PUT BUCKET URL HERE
+              {subdomain}
             </Text>
           </Box>
           <Box>
@@ -92,14 +115,69 @@ const RequestView = ({ event }: any) => {
   </Card>
 )}
 
-const BucketView = ({ bucket }: BucketViewProps) => {
+type BucketViewProps = {
+  subdomain: string
+}
+
+const BucketView = ({subdomain}: BucketViewProps) => {
+  let [requests, setRequests] = useState<any[]>([])
+  let [currentRequest, setCurrentRequest] = useState({ data: { hello: 'this is data' }})
+
+  const {
+    sendMessage,
+    sendJsonMessage,
+    lastMessage,
+    lastJsonMessage,
+    getWebSocket,
+  } = useWebSocket(WS_URL, {
+    onOpen: () => {
+      console.log('WebSocket connection established.');
+      sendMessage(subdomain)
+    },
+    onMessage: (e: any) => {
+      console.log(e)
+      console.log(e.message)
+    }
+  });
+  
+  const getrequests = async() => {
+    console.log("IN INITIAL FETCH", subdomain)
+    try {
+      const requests = await axios.get(domain + "requests/" + subdomain)
+      console.log(requests)
+      setRequests(requests.data)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  // setTimeout(() => {
+  //   sendJsonMessage({
+  //     subdomain,
+  //     count: requests.length
+  //   })
+  //   console.log("JSON", lastJsonMessage)
+
+  //   if (lastJsonMessage && lastJsonMessage.length) {
+  //     let reqs = lastJsonMessage as any[]
+  //     setRequests(reqs)
+  //   }
+  // }, 6000)
+
+  useEffect(() => {
+    console.log("EFFECT")
+    getrequests()
+    // setrequests(["TESTTESTS"])
+  }, [])
+
   return (
     <Box>
+      <Link href="/dashboard/me">Back to Buckets</Link>
       <HStack align="start">
-        <Inspector events={bucket.events}></Inspector>
+        <Inspector events={requests}></Inspector>
         <VStack w='100%'>
-          <BucketInfo bucket={bucket}></BucketInfo>
-          <RequestView event={{ data: { hello: 'this is data' }}}></RequestView>
+          <BucketInfo subdomain={subdomain}></BucketInfo>
+          <RequestView event={currentRequest}></RequestView>
         </VStack>
       </HStack>
     </Box>

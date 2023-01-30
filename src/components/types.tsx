@@ -1,6 +1,6 @@
 export type Bucket = {
-  name: string;
+  subdomain: string;
   owner: string;
-  updatedAt: string;
+  createdAt: string;
   events?: any
 };

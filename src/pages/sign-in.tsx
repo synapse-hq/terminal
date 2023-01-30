@@ -36,7 +36,7 @@ const SignIn = () => {
       username: values.username,
       passwordHash: values.password,
     });
-    fetch("https://bruinooge.dev/api/users/login", {
+    fetch("https://terminal.diegohernandezramirez.dev/api/users/login", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body,

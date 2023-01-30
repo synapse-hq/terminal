@@ -6,10 +6,16 @@ import {
   ColumnDef,
 } from "@tanstack/react-table";
 
+
+import { type Bucket } from './types';
+import Link from 'next/link';
+
 export type DataTableProps<Data extends object> = {
-  data: Data[];
-  columns: ColumnDef<Data, any>[];
+  data: Bucket[];
+  columns: ColumnDef<Bucket, any>[];
 };
+
+const domain = "https://terminal.diegohernandezramirez.dev/api"
 
 function DataTable<Data extends object>({
   data,
@@ -20,6 +26,12 @@ function DataTable<Data extends object>({
     data,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  const viewBucket = (e: any) => {
+    e.preventDefault();
+    let paths = e.target.href.split('/')
+    let endpoint = paths[paths.length - 1]
+  }
 
   return (
     <Table>
@@ -40,7 +52,26 @@ function DataTable<Data extends object>({
         ))}
       </Thead>
       <Tbody>
-        {table.getRowModel().rows.map((row) => (
+
+          {data.map(data =>
+            <Tr>
+              <>
+                <Td>
+                  {data.subdomain}
+                </Td>
+                <Td>
+                  <Link href={`/Bucket/${encodeURIComponent(data.subdomain)}`}>
+                    View Bucket
+                  </Link>
+                </Td>
+                <Td>
+                  {data.createdAt}
+                </Td>
+              </>
+            </Tr>
+          )}
+  
+        {/* {table.getRowModel().rows.map((row) => (
           <Tr key={row.id}>
             {row.getVisibleCells().map((cell) => {
               return (
@@ -50,7 +81,7 @@ function DataTable<Data extends object>({
               );
             })}
           </Tr>
-        ))}
+        ))} */}
       </Tbody>
     </Table>
   );
