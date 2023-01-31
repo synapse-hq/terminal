@@ -62,3 +62,47 @@ button.manual-request-retrieval:hover {
       transform:rotate(360deg);
   }
 }
+
+.scroll-item {
+  background-color: #F5F5F5;
+  border: 1px solid #DDDDDD;
+  border-radius: 4px 0 4px 0;
+  color: #3B3C3E;
+  font-size: 12px;
+  font-weight: bold;
+  left: -1px;
+  padding: 10px 7px 5px;
+}
+
+div#event-scroll {
+  height: 560px;
+  overflow: scroll;
+  overflow-x: hidden;
+  cursor: zoom-in;
+}
+
+div[class^=raw-request-] {
+  position: absolute;
+  background-color: white;
+  box-shadow: 0px 12px 12px 10px rgba(10, 10, 10, 20);
+  border-radius: 15px;
+  margin: 20px 0;
+  padding: 10px 15px;
+  overflow: scroll;
+  overflow-Y: hidden;
+  width: 92%
+}
+
+.raw-request-hide {
+  display: none;
+}
+
+.raw-request-show {
+  display: block;
+}
+
+div.bucket-scroll {
+  height: 700px;
+  overflow: scroll;
+  overflow-X: hidden
+}

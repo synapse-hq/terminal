@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { Box, Heading, Text, Button } from "@chakra-ui/react";
 import BrandButton from "src/components/BrandButton";
+import  {useRouter} from "next/router"
 
 export default function NotFound() {
+  const router = useRouter()
+  const returnHome = () => {
+    router.push("/dashboard/me")
+  }
   return (
     <Box textAlign="center" py={10} px={6}>
       <Heading
@@ -22,7 +27,7 @@ export default function NotFound() {
       </Text>
 
       <Link href="/">
-        <BrandButton type="secondary">Go to Home</BrandButton>
+        <BrandButton type="secondary" onClick={returnHome}>Go to Home</BrandButton>
       </Link>
     </Box>
   );

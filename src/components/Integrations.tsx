@@ -7,7 +7,7 @@ import {
   SimpleGrid,
   Icon,
 } from "@chakra-ui/react";
-import theme from "../pages/theme";
+import theme from "../styles/theme";
 import {
   FaGithub,
   FaSlack,

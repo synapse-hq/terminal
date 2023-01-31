@@ -28,27 +28,8 @@ function DataTable<Data extends object>({
     getCoreRowModel: getCoreRowModel(),
   });
 
-  
-  const scroll = {   
-    backgroundColor: "#F5F5F5",
-    border: "1px solid #DDDDDD",
-    borderRadius: "4px 0 4px 0",
-    color: "#3B3C3E",
-    fontSize: "12px",
-    fontWeight: "bold",
-    left: "-1px",
-    padding: "10px 7px 5px",
-    point: "cursor"
-  }
-
-  const withScroll = {
-    height: "700px",
-    overflow: "scroll",
-    overflowX: "hidden",
-  }
-
   return (
-    <div style={withScroll}>
+    <div className="bucket-scroll">
   <Table>
       <Thead>
         <Tr>
@@ -63,7 +44,7 @@ function DataTable<Data extends object>({
       <Tbody>
 
           {data.map(data =>
-            <Tr style={scroll}>
+            <Tr className="scroll-item">
               <>
                 <Td>
                   {data.subdomain}

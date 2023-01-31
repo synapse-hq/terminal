@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { useState, useEffect, useRef } from "react"
 import axios from "axios"
 
+
 const domain = "https://terminal.diegohernandezramirez.dev/api/"
 const domain2 = "terminal.diegohernandezramirez.dev"
 
@@ -44,8 +45,6 @@ const ConnectionStatus = ({stale, updateRequests}: any) => {
 }
 
 const Inspector = ({ events, view, stale, updateRequests }: any) => {
-  console.log("STALE:", stale)
-
   if (events.length === 0) {
     return (
       <VStack bg="gray.200" w={350} p={10} h="calc(100vh)">
@@ -62,33 +61,13 @@ const Inspector = ({ events, view, stale, updateRequests }: any) => {
     return eventData
   }
 
-  const scroll = {   
-    backgroundColor: "#F5F5F5",
-    border: "1px solid #DDDDDD",
-    borderRadius: "4px 0 4px 0",
-    color: "#3B3C3E",
-    fontSize: "12px",
-    fontWeight: "bold",
-    left: "-1px",
-    padding: "10px 7px 5px",
-    point: "cursor"
-  }
-
-  const withScroll = {
-    height: "560px",
-    overflow: "scroll",
-    overflowX: "hidden",
-    cursor: "zoom-in",
-  }
-  
-
   return (
 
     <VStack bg="whiteAlpha.300">
       <Heading>All Requests</Heading>
-      <div style={withScroll}>
+      <div id="event-scroll">
       {events.map((event: any) => 
-        <Text style={scroll} onClick={() => view(event.id)}>
+        <Text className="scroll-item" onClick={() => view(event.id)}>
           {formatEvent(event)}
         </Text>
       )}
@@ -147,25 +126,8 @@ const PrettyPrintJSON = ({data}: any) => {
 const RequestView = ({ event }: any) => {
   let [rawView, setRawView] = useState(false)
 
-  const withScroll = {
-    width: "600px",
-    overflow: "scroll",
-    overflowY: "hidden"
-  }
   
-  const display = rawView ? "block" : "none";
-  const rawRequest = {
-    display,
-    position: "absolute",
-    backgoundColor: "#white",
-    boxShadow: "0px 12px 12px 10px rgba(10, 10, 10, 20)",
-    borderRadius: "15px",
-    margin: "20px 0",
-    padding: "10px 15px",
-    overflow: "scroll",
-    overflowY: "hidden",
-    width: "92%"
-  }
+  const display = rawView ? "show" : "hide";
 
   const showRaw = () => {
     setRawView(!rawView)
@@ -192,7 +154,7 @@ const RequestView = ({ event }: any) => {
           <button onClick={showRaw}>{rawView ? " 🔼" : " 🔽"}</button>
         </Heading>
       </div>
-      <div style={rawRequest}>
+      <div className={"raw-request-" + display}>
         <PrettyPrintJSON data={event.rawRequest} />
       </div>
     </CardBody>
@@ -214,8 +176,6 @@ const BucketView = ({subdomain}: BucketViewProps) => {
 
   const {
     sendMessage,
-    sendJsonMessage,
-    lastMessage,
     lastJsonMessage,
   } = useWebSocket(WS_URL, {
     onOpen: () => {
