@@ -1,13 +1,23 @@
 import FormTemplate from "@/components/FormTemplate";
 import { FormikValues } from "formik";
 import { useRouter } from "next/router";
-import SessionContext from "../context/session";
-import { useContext } from "react";
+import { useEffect } from "react";
+import axios from "axios"
+
+const domain = "https://terminal.diegohernandezramirez.dev/api"
 
 const SignIn = () => {
   const router = useRouter();
-  const sessionContext = useContext(SessionContext)
-
+  // const sessionContext = useContext(SessionContext)
+    const checkUser = async() => {
+    try {
+      const user: any = await axios.get(domain + "/users/session_test")
+      const username = user.data.username
+      router.push("/dashboard/" + username)
+    } catch(err) {
+      return
+    }
+  } 
   const validateUsername = (value: string): string | undefined => {
     let error;
     if (!value) {
@@ -44,28 +54,32 @@ const SignIn = () => {
       .then((response) => {
         return response.json();
       })
-      .then((data) => {
+      .then((data: any) => {
         let error = data.error;
         if (error) {
+          console.log("error", error)
+
           let lowercasedError = error.toLowerCase();
 
-          if (lowercasedError.includes("username")) {
-            return actions.setFieldError("username", error);
+          if (lowercasedError.includes("user")) {
+            return actions.setFieldError("username", error, false);
           } else if (lowercasedError.includes("password")) {
-            return actions.setFieldError("password", error);
+            return actions.setFieldError("password", error, false);
           } else {
             return;
           }
         }
 
-        sessionContext.setSession(data.username)
-
         router.push(`/dashboard/${data.username}`);
       })
       .catch((error) => {
-        console.log(error);
+        console.log("ERROR", error);
       });
   };
+
+  useEffect(() => {
+    checkUser()
+  }, [])
 
   return (
     <FormTemplate

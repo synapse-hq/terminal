@@ -5,26 +5,47 @@ import BucketsTable from './BucketsTable'
 import { type Bucket } from './types'
 import axios from "axios";
 import { useState, useEffect } from "react";
-
-interface BucketsViewProps {
-  buckets: Bucket[]
-}
+import { useRouter } from 'next/router';
 
 
-const BucketsView = ({buckets}:BucketsViewProps) => {
+
+
+const domain = "https://terminal.diegohernandezramirez.dev/api"
+
+const BucketsView = () => {
+  const [buckets, setBuckets] = useState([]);
+  const router = useRouter()
+
+  const getBuckets = async() => {
+    try {
+      const buckets = await axios.get(domain + "/buckets")
+      setBuckets(buckets.data)
+    } catch (err: any) {
+      router.push("/")
+    }
+  }
+
+  useEffect(() => {
+    getBuckets()
+  }, [])
+  
   const handleCreateBucket = () => {
-    fetch('https://terminal.diegohernandezramirez.dev/api/buckets', { method: 'POST', credentials: 'include' })
+    fetch('https://terminal.diegohernandezramirez.dev/api/buckets', 
+    { method: 'POST', credentials: 'include' })
       .then(response => {
         return response.json();
-      }).then(data => {
-        console.log(data);
+      }).then(bucket => {
+        if (bucket) {
+          setBuckets(buckets.concat(bucket))
+        } else {
+          router.push("/")
+        }
       })
       .catch(err => {
         console.log(err)
       })
   }
 
-  console.log("FROM BK VIEW", buckets)
   if (buckets.length === 0) {
     return (
       <Box>

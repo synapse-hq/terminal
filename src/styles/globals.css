@@ -1,0 +1,64 @@
+.inspect-bucket-link {
+  display: inline-block;
+  padding: 20px;
+  background-color: rgb(93, 161, 93);
+  text-align: center;
+  border-radius: 100%;
+  cursor: zoom-in;
+}
+
+.inspect-bucket-link:hover {
+  opacity: 0.5;
+  transform: scale(1.2);
+  transition-duration: 0.7s
+}
+
+div[class^=stale-requests-] {
+  color: white;
+  display: block;
+  margin: 40px 0;
+  text-align: center;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: rgb(176, 25, 25);
+}
+
+div[class^=stale-requests] button {
+  font-size: 40px;
+}
+
+.stale-requests-true {
+  background-color: rgb(176, 25, 25);
+}
+
+div.stale-requests-false {
+  background-color: rgba(109, 192, 92, 0.905);
+}
+
+div.stale-requests-false button {
+  animation-name: spin;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; 
+}
+
+button.manual-request-retrieval {
+  background: rgba(193, 183, 183, 0.738);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+button.manual-request-retrieval:hover {
+  background-color: rgba(109, 192, 92, 0.905);
+  transform: scale(1.1);
+  transition-duration: 0.5;
+}
+
+@keyframes spin {
+  from {
+      transform:rotate(0deg);
+  }
+  to {
+      transform:rotate(360deg);
+  }
+}

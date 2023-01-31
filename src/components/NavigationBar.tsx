@@ -8,6 +8,7 @@ import {
 import NextLink from "next/link";
 import React from "react";
 import Logo from "./Logo";
+import { useRouter } from "next/router"
 
 interface Props {
   children: React.ReactNode;
@@ -23,6 +24,11 @@ const NavLink: React.FC<Props> = ({ link, children }) => {
 };
 
 const NavigationBar: React.FC = () => {
+  const router = useRouter()
+  const redirectToLogin = () => {
+    router.push("/sign-in")
+  }
+  
   return (
     <Box as="nav" bg="black" color="white" py="5">
       <Box maxWidth={{ base: "xl", md: "3xl" }} mx="auto">
@@ -40,6 +46,7 @@ const NavigationBar: React.FC = () => {
                     background: "transparent",
                     borderColor: "white",
                   }}
+                  onClick={redirectToLogin}
                 >
                   Get Started
                 </Button>

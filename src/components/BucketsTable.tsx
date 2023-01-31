@@ -1,8 +1,6 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import DataTable from "./BucketDataTable";
 import { type Bucket } from './types';
-// import { useEffect, useState } from 'react';
-// import axios from "axios"
 
 const columnHelper = createColumnHelper<Bucket>();
 

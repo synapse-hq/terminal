@@ -9,6 +9,7 @@ import {
 
 import { type Bucket } from './types';
 import Link from 'next/link';
+import axios from "axios"
 
 export type DataTableProps<Data extends object> = {
   data: Bucket[];
@@ -27,63 +28,62 @@ function DataTable<Data extends object>({
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const viewBucket = (e: any) => {
-    e.preventDefault();
-    let paths = e.target.href.split('/')
-    let endpoint = paths[paths.length - 1]
+  
+  const scroll = {   
+    backgroundColor: "#F5F5F5",
+    border: "1px solid #DDDDDD",
+    borderRadius: "4px 0 4px 0",
+    color: "#3B3C3E",
+    fontSize: "12px",
+    fontWeight: "bold",
+    left: "-1px",
+    padding: "10px 7px 5px",
+    point: "cursor"
+  }
+
+  const withScroll = {
+    height: "700px",
+    overflow: "scroll",
+    overflowX: "hidden",
   }
 
   return (
-    <Table>
+    <div style={withScroll}>
+  <Table>
       <Thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <Tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => {
-              return (
-                <Th key={header.id}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                </Th>
-              );
-            })}
-          </Tr>
-        ))}
+        <Tr>
+          <Th>
+            Subdomain
+          </Th>
+          <Th>
+            Created On
+          </Th>
+        </Tr>
       </Thead>
       <Tbody>
 
           {data.map(data =>
-            <Tr>
+            <Tr style={scroll}>
               <>
                 <Td>
                   {data.subdomain}
                 </Td>
-                <Td>
-                  <Link href={`/Bucket/${encodeURIComponent(data.subdomain)}`}>
-                    View Bucket
-                  </Link>
-                </Td>
+
                 <Td>
                   {data.createdAt}
                 </Td>
+                
+                <Td>
+                  <Link  href={`/Bucket/${encodeURIComponent(data.subdomain)}`} className="inspect-bucket-link">
+                    View Bucket
+                  </Link>
+                </Td> 
               </>
             </Tr>
           )}
-  
-        {/* {table.getRowModel().rows.map((row) => (
-          <Tr key={row.id}>
-            {row.getVisibleCells().map((cell) => {
-              return (
-                <Td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </Td>
-              );
-            })}
-          </Tr>
-        ))} */}
       </Tbody>
     </Table>
+    </div>
   );
 }
 

@@ -16,26 +16,42 @@ import {
 import { type Bucket } from "./types";
 
 import Link from 'next/link';
-import { useState, useEffect } from "react"
-import bucketsContext from "@/context/buckets";
+import { useState, useEffect, useRef } from "react"
 import axios from "axios"
 
 const domain = "https://terminal.diegohernandezramirez.dev/api/"
+const domain2 = "terminal.diegohernandezramirez.dev"
 
 import useWebSocket from 'react-use-websocket';
+import { useRouter } from "next/router";
 const WS_URL = 'wss://terminal.diegohernandezramirez.dev/api/socket/buckets';
 
+const ConnectionStatus = ({stale, updateRequests}: any) => {
+  const msg = stale ? "Attempting to connect to endpoint to listen for requests" : "Listening for incoming requests" 
+  const symbol = stale ? "⭕" : "🔁"
+  return (
+    <>
+    <div className={"stale-requests-" + stale.toString()}> 
+      <h3>{msg}</h3>
+      <button disabled>{symbol}</button>
+    </div>
 
-// interface BucketViewProps {
-//   bucket: Bucket;
-// }
+      <button className="manual-request-retrieval" onClick={updateRequests}>Retrieve all requests</button>
+  
+    </>
+  )
 
-const Inspector = ({ events }: any) => {
+}
+
+const Inspector = ({ events, view, stale, updateRequests }: any) => {
+  console.log("STALE:", stale)
+
   if (events.length === 0) {
     return (
       <VStack bg="gray.200" w={350} p={10} h="calc(100vh)">
         <Text fontWeight="bold">Waiting for events...</Text>
         <Text>Inbound events will appear here for inspection</Text>
+        <ConnectionStatus stale={stale} updateRequests={updateRequests}/>
       </VStack>
     );
   }
@@ -46,15 +62,38 @@ const Inspector = ({ events }: any) => {
     return eventData
   }
 
-  console.log("EVENTS", events)
+  const scroll = {   
+    backgroundColor: "#F5F5F5",
+    border: "1px solid #DDDDDD",
+    borderRadius: "4px 0 4px 0",
+    color: "#3B3C3E",
+    fontSize: "12px",
+    fontWeight: "bold",
+    left: "-1px",
+    padding: "10px 7px 5px",
+    point: "cursor"
+  }
+
+  const withScroll = {
+    height: "560px",
+    overflow: "scroll",
+    overflowX: "hidden",
+    cursor: "zoom-in",
+  }
+  
+
   return (
 
     <VStack bg="whiteAlpha.300">
+      <Heading>All Requests</Heading>
+      <div style={withScroll}>
       {events.map((event: any) => 
-        <li>
+        <Text style={scroll} onClick={() => view(event.id)}>
           {formatEvent(event)}
-        </li>
+        </Text>
       )}
+      </div>
+      <ConnectionStatus stale={stale} updateRequests={updateRequests}/>
     </VStack>
   );
 };
@@ -68,12 +107,13 @@ const BucketInfo = ({subdomain}: {subdomain: string}) => {
       <CardBody>
         <Stack divider={<StackDivider />} spacing="4">
           <Box>
-            <Heading size="xs" textTransform="uppercase">
-              {subdomain}
+            <Text pt="2" fontSize="med">
+            Make requests to your endpoint:
+              </Text>
+            <Heading size="xs">
+              {"https://" + subdomain}.{domain2}
             </Heading>
-            <Text pt="2" fontSize="sm">
-              {subdomain}
-            </Text>
+
           </Box>
           <Box>
             <Heading size="xs" textTransform="uppercase" mb={2}>
@@ -105,14 +145,61 @@ const PrettyPrintJSON = ({data}: any) => {
 }
 
 const RequestView = ({ event }: any) => {
-  return (<Card w='100%'>
+  let [rawView, setRawView] = useState(false)
+
+  const withScroll = {
+    width: "600px",
+    overflow: "scroll",
+    overflowY: "hidden"
+  }
+  
+  const display = rawView ? "block" : "none";
+  const rawRequest = {
+    display,
+    position: "absolute",
+    backgoundColor: "#white",
+    boxShadow: "0px 12px 12px 10px rgba(10, 10, 10, 20)",
+    borderRadius: "15px",
+    margin: "20px 0",
+    padding: "10px 15px",
+    overflow: "scroll",
+    overflowY: "hidden",
+    width: "92%"
+  }
+
+  const showRaw = () => {
+    setRawView(!rawView)
+  }
+
+  return (
+  <>
+  <Card w='100%'>
     <CardHeader>
       <Heading size='md'>Request details</Heading>
     </CardHeader>
     <CardBody>
-      <PrettyPrintJSON data={event.data} />
+      <div>Method:  {event.method}</div>
+      <div>Path: {event.path}</div>
+      <div>Query:  {JSON.stringify(event.query)}</div>
+      
+      <div>Sent on:  {event.createdAt}</div>
+      <div>Source IP:  {event.clientIp}</div><br></br>
+
+
+      <div>
+        <Heading size="xs">
+          See Raw Request {" "}
+          <button onClick={showRaw}>{rawView ? " 🔼" : " 🔽"}</button>
+        </Heading>
+      </div>
+      <div style={rawRequest}>
+        <PrettyPrintJSON data={event.rawRequest} />
+      </div>
     </CardBody>
   </Card>
+  </>
+
+  
 )}
 
 type BucketViewProps = {
@@ -121,63 +208,70 @@ type BucketViewProps = {
 
 const BucketView = ({subdomain}: BucketViewProps) => {
   let [requests, setRequests] = useState<any[]>([])
-  let [currentRequest, setCurrentRequest] = useState({ data: { hello: 'this is data' }})
+  let [currentRequest, setCurrentRequest] = useState(-1)
+  let [staleData, setStale] = useState(false)
+  const router = useRouter()
 
   const {
     sendMessage,
     sendJsonMessage,
     lastMessage,
     lastJsonMessage,
-    getWebSocket,
   } = useWebSocket(WS_URL, {
     onOpen: () => {
       console.log('WebSocket connection established.');
+      setStale(false)
       sendMessage(subdomain)
     },
     onMessage: (e: any) => {
-      console.log(e)
-      console.log(e.message)
-    }
+      if (lastJsonMessage) {
+        setRequests(requests.concat(lastJsonMessage))
+      }
+    },
+    shouldReconnect: (closeEvent: any) => {
+      setStale(true)
+      return true
+    },
+    reconnectAttempts: 10,
+    reconnectInterval: 5000,
   });
   
-  const getrequests = async() => {
-    console.log("IN INITIAL FETCH", subdomain)
+  const getRequests = async() => {
     try {
       const requests = await axios.get(domain + "requests/" + subdomain)
-      console.log(requests)
       setRequests(requests.data)
     } catch (err) {
       console.log(err)
     }
   }
 
-  // setTimeout(() => {
-  //   sendJsonMessage({
-  //     subdomain,
-  //     count: requests.length
-  //   })
-  //   console.log("JSON", lastJsonMessage)
-
-  //   if (lastJsonMessage && lastJsonMessage.length) {
-  //     let reqs = lastJsonMessage as any[]
-  //     setRequests(reqs)
-  //   }
-  // }, 6000)
-
   useEffect(() => {
-    console.log("EFFECT")
-    getrequests()
-    // setrequests(["TESTTESTS"])
+    getRequests()
   }, [])
+
+  let viewing = {}
+  if (currentRequest < 1) {
+    viewing = { rawRequest: 'Click a request to inspect its contents' }
+  } else {
+    let request = requests.find(req => req.id === currentRequest)
+    viewing = request
+  }
 
   return (
     <Box>
-      <Link href="/dashboard/me">Back to Buckets</Link>
       <HStack align="start">
-        <Inspector events={requests}></Inspector>
+        <Inspector 
+          events={requests} 
+          view={setCurrentRequest}
+          updateRequests={getRequests}
+          stale={staleData}  
+        >
+
+          </Inspector>
         <VStack w='100%'>
+          <Link href="/dashboard/me">Back to Buckets</Link>
           <BucketInfo subdomain={subdomain}></BucketInfo>
-          <RequestView event={currentRequest}></RequestView>
+          <RequestView event={viewing}></RequestView>
         </VStack>
       </HStack>
     </Box>

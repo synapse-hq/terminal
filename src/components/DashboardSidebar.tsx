@@ -32,6 +32,10 @@ import { IconType } from "react-icons";
 import Logo from './Logo'
 import NextLink from "next/link";
 
+import { useRouter } from 'next/router';
+import axios from "axios"
+
+
 interface LinkItemProps {
   name: string;
   icon: IconType;
@@ -41,6 +45,8 @@ const LinkItems: Array<LinkItemProps> = [
   { name: "Sources", icon: FaFaucet },
   { name: "Settings", icon: FaCog },
 ];
+
+const domain = "https://terminal.diegohernandezramirez.dev/api"
 
 export default function SidebarWithHeader({
   children,
@@ -151,8 +157,15 @@ interface MobileProps extends FlexProps {
   onOpen: () => void;
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
-  const handleSignOut = () => {
-    fetch('https://bruinooge.dev/api/users/logout', { method: 'POST', credentials: 'include' })
+  const router = useRouter();
+
+  const handleSignOut = async() => {
+    try {
+      await axios.post(domain + "/users/logout");
+      router.push("/")
+    } catch(err) {
+      router.push("/")
+    }
   }
 
   return (

@@ -1,6 +1,7 @@
 import FormTemplate from '@/components/FormTemplate';
 import { FormikValues } from 'formik';
 import { useRouter } from 'next/router';
+const domain = "https://terminal.diegohernandezramirez.dev/api"
 
 const SingUp = () => {
   const router = useRouter();
@@ -29,7 +30,7 @@ const SingUp = () => {
     actions.setSubmitting(false);
 
     let body = JSON.stringify({ username: values.username, passwordHash: values.password });
-    fetch("terminal.diegohernandezramirez.dev/api/users",
+    fetch(domain + "/users",
       { method: 'POST', headers: { 'content-type': 'application/json' }, body })
       .then(response => {
         return response.json();
@@ -47,7 +48,7 @@ const SingUp = () => {
           }
         }
 
-        router.push(`/dashboard/${data.username}`);
+        router.push(`/sign-in`);
       }).catch(error => {
         console.log(error);
       });

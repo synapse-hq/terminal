@@ -1,3 +1,5 @@
+import DashboardSidebar from "../../components/DashboardSidebar";
+
 import BucketView from "../../components/BucketView"
 import { useRouter } from 'next/router'
 import { useState} from 'react'
