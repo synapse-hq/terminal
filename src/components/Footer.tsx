@@ -1,3 +1,4 @@
+import React from "react";
 import { Box, Text, Flex, useColorModeValue, Heading, Icon, HStack } from "@chakra-ui/react";
 import Logo from './Logo'
 

@@ -5,18 +5,17 @@ import {
   getCoreRowModel,
   ColumnDef,
 } from "@tanstack/react-table";
+import React from "react";
 
-
-import { type Bucket } from './types';
+import { type Bucket } from '../types';
 import Link from 'next/link';
-import axios from "axios"
+
+
 
 export type DataTableProps<Data extends object> = {
   data: Bucket[];
   columns: ColumnDef<Bucket, any>[];
 };
-
-const domain = "https://terminal.diegohernandezramirez.dev/api"
 
 function DataTable<Data extends object>({
   data,

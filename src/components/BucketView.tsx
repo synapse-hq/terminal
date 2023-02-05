@@ -1,3 +1,5 @@
+import React from "react"
+
 import {
   Heading,
   Text,
@@ -13,19 +15,15 @@ import {
   ListItem,
   ChakraBaseProvider,
 } from "@chakra-ui/react";
-import { type Bucket } from "./types";
 
+import { type Bucket } from "../types";
 import Link from 'next/link';
 import { useState, useEffect, useRef } from "react"
 import axios from "axios"
 
-
-const domain = "https://terminal.diegohernandezramirez.dev/api/"
-const domain2 = "terminal.diegohernandezramirez.dev"
-
 import useWebSocket from 'react-use-websocket';
 import { useRouter } from "next/router";
-const WS_URL = 'wss://terminal.diegohernandezramirez.dev/api/socket/buckets';
+import routes from '../constants/routes'
 
 const ConnectionStatus = ({stale, updateRequests}: any) => {
   const msg = stale ? "Attempting to connect to endpoint to listen for requests" : "Listening for incoming requests" 
@@ -90,7 +88,7 @@ const BucketInfo = ({subdomain}: {subdomain: string}) => {
             Make requests to your endpoint:
               </Text>
             <Heading size="xs">
-              {"https://" + subdomain}.{domain2}
+              {routes.subdomainUrl(subdomain)}
             </Heading>
 
           </Box>
@@ -174,19 +172,23 @@ const BucketView = ({subdomain}: BucketViewProps) => {
   let [staleData, setStale] = useState(false)
   const router = useRouter()
 
-  const {
-    sendMessage,
-    lastJsonMessage,
-  } = useWebSocket(WS_URL, {
+  const { sendMessage } = useWebSocket(routes.WEBSOCKET_URL, {
     onOpen: () => {
-      console.log('WebSocket connection established.');
       setStale(false)
       sendMessage(subdomain)
+      
+      console.log('WebSocket connection established.');
     },
     onMessage: (e: any) => {
-      if (lastJsonMessage) {
-        setRequests(requests.concat(lastJsonMessage))
+      if (e.data) {
+        const newRequest = JSON.parse(e.data)
+        setRequests(requests.concat(newRequest))
+
+        console.log("DATA FROM WEBSOCKET", newRequest)
       }
+    },
+    onClose: (e: any) => {
+      console.log("WebSocket connection closed")
     },
     shouldReconnect: (closeEvent: any) => {
       setStale(true)
@@ -198,7 +200,7 @@ const BucketView = ({subdomain}: BucketViewProps) => {
   
   const getRequests = async() => {
     try {
-      const requests = await axios.get(domain + "requests/" + subdomain)
+      const requests = await axios.get(routes.fetchBucketRequests(subdomain))
       setRequests(requests.data)
     } catch (err) {
       console.log(err)

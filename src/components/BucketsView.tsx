@@ -1,16 +1,12 @@
 import { Box, Text, VStack } from '@chakra-ui/react'
+import React from "react"
 import BrandButton from './BrandButton'
-import { ReactNode } from 'react'
 import BucketsTable from './BucketsTable'
-import { type Bucket } from './types'
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 
-
-
-
-const domain = "https://terminal.diegohernandezramirez.dev/api"
+import routes from "../constants/routes"
 
 const BucketsView = () => {
   const [buckets, setBuckets] = useState([]);
@@ -18,7 +14,7 @@ const BucketsView = () => {
 
   const getBuckets = async() => {
     try {
-      const buckets = await axios.get(domain + "/buckets")
+      const buckets = await axios.get(routes.GET_BUCKETS)
       setBuckets(buckets.data)
     } catch (err: any) {
       router.push("/")
@@ -30,8 +26,7 @@ const BucketsView = () => {
   }, [])
   
   const handleCreateBucket = () => {
-    fetch('https://terminal.diegohernandezramirez.dev/api/buckets', 
-    { method: 'POST', credentials: 'include' })
+    fetch(routes.GET_BUCKETS, { method: 'POST', credentials: 'include' })
       .then(response => {
         return response.json();
       }).then(bucket => {

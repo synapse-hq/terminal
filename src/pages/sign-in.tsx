@@ -1,23 +1,16 @@
-import FormTemplate from "@/components/FormTemplate";
+import React from "react";
+import FormTemplate from "../components/FormTemplate";
 import { FormikValues } from "formik";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
-import axios from "axios"
 
-const domain = "https://terminal.diegohernandezramirez.dev/api"
+import { useAuth } from "../hooks/use-auth"
+import { authIsInitialized } from "../assertions"
+
 
 const SignIn = () => {
+  const auth = useAuth();
   const router = useRouter();
-  // const sessionContext = useContext(SessionContext)
-    const checkUser = async() => {
-    try {
-      const user: any = await axios.get(domain + "/users/session_test")
-      const username = user.data.username
-      router.push("/dashboard/" + username)
-    } catch(err) {
-      return
-    }
-  } 
+ 
   const validateUsername = (value: string): string | undefined => {
     let error;
     if (!value) {
@@ -42,23 +35,16 @@ const SignIn = () => {
   ): void => {
     actions.setSubmitting(false);
 
-    let body = JSON.stringify({
+    const credentials = {
       username: values.username,
-      passwordHash: values.password,
-    });
-    fetch("https://terminal.diegohernandezramirez.dev/api/users/login", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body,
-    })
-      .then((response) => {
-        return response.json();
-      })
+      password: values.password,
+    }
+
+    authIsInitialized(auth)
+    auth.signIn(credentials.username, credentials.password)
       .then((data: any) => {
         let error = data.error;
         if (error) {
-          console.log("error", error)
-
           let lowercasedError = error.toLowerCase();
 
           if (lowercasedError.includes("user")) {
@@ -69,17 +55,8 @@ const SignIn = () => {
             return;
           }
         }
-
-        router.push(`/dashboard/${data.username}`);
-      })
-      .catch((error) => {
-        console.log("ERROR", error);
       });
   };
-
-  useEffect(() => {
-    checkUser()
-  }, [])
 
   return (
     <FormTemplate

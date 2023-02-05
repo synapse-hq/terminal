@@ -1,9 +1,11 @@
+import React from "react";
+
 import { Box, VStack, Heading, Text, HStack, Button } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router"
+import routes from "../constants/routes"
 
 const Header: React.FC = () => {
-  const gitRepo = "https://github.com/synapse-hq"
   const router = useRouter()
   const redirectToLogin = () => {
     router.push("/sign-in")
@@ -37,7 +39,7 @@ const Header: React.FC = () => {
           >
             Get Started
           </Button>
-          <a href={gitRepo} target="_blank">
+          <a href={routes.GIT_REPO} target="_blank">
             <Button
               variant="outline"
               borderColor="purple.600"

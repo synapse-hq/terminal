@@ -1,12 +1,14 @@
+import React from "react";
 import Head from 'next/head'
-import Image from 'next/image'
-import styles from '@/styles/Home.module.css'
-import NavigationBar from 'src/components/NavigationBar'
-import Header from 'src/components/Header'
-import Workflow from 'src/components/Workflow'
-import Footer from 'src/components/Footer'
-import Testimonials from 'src/components/Testimonials'
-import Integrations from 'src/components/Integrations'
+// import Image from 'next/image'
+// import styles from '../styles/Home.module.css'
+
+import NavigationBar from '../components/NavigationBar'
+import Header from '../components/Header'
+import Workflow from '../components/Workflow'
+import Footer from '../components/Footer'
+import Testimonials from '../components/Testimonials'
+import Integrations from '../components/Integrations'
 import { Divider } from '@chakra-ui/react'
 
 export default function Home() {

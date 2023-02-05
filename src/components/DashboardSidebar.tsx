@@ -31,10 +31,8 @@ import { FaBitbucket, FaFaucet, FaCog } from 'react-icons/fa'
 import { IconType } from "react-icons";
 import Logo from './Logo'
 import NextLink from "next/link";
-
-import { useRouter } from 'next/router';
-import axios from "axios"
-
+import { useAuth } from "../hooks/use-auth";
+import { authIsInitialized } from "../assertions"
 
 interface LinkItemProps {
   name: string;
@@ -45,8 +43,6 @@ const LinkItems: Array<LinkItemProps> = [
   { name: "Sources", icon: FaFaucet },
   { name: "Settings", icon: FaCog },
 ];
-
-const domain = "https://terminal.diegohernandezramirez.dev/api"
 
 export default function SidebarWithHeader({
   children,
@@ -156,15 +152,24 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 interface MobileProps extends FlexProps {
   onOpen: () => void;
 }
+
+
+type UserActions = {
+  user: string;
+  signIn: (username: string, password: string) => Promise<void | Error>;
+  signUp: (username: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+}
+
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
-  const router = useRouter();
+  const auth = useAuth();
 
   const handleSignOut = async() => {
     try {
-      await axios.post(domain + "/users/logout");
-      router.push("/")
-    } catch(err) {
-      router.push("/")
+      authIsInitialized(auth);
+      auth.signOut();
+    } catch (err) {
+      console.log("ERR", err)
     }
   }
 

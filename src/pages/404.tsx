@@ -1,6 +1,7 @@
+import React from "react";
 import Link from "next/link";
 import { Box, Heading, Text, Button } from "@chakra-ui/react";
-import BrandButton from "src/components/BrandButton";
+import BrandButton from "../components/BrandButton";
 import  {useRouter} from "next/router"
 
 export default function NotFound() {
