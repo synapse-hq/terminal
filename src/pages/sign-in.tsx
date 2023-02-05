@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import FormTemplate from "../components/FormTemplate";
 import { FormikValues } from "formik";
 import { useRouter } from "next/router";
@@ -10,7 +10,18 @@ import { authIsInitialized } from "../assertions"
 const SignIn = () => {
   const auth = useAuth();
   const router = useRouter();
- 
+  
+  // useEffect(() => {
+  //   try {
+  //     authIsInitialized(auth);
+  //     if (auth.user) {
+  //       router.push(`/dashboard/${auth.user}`)
+  //     } 
+  //   } catch(err) {
+  //     console.log("ERROR", err)
+  //   }
+  // }, [])
+
   const validateUsername = (value: string): string | undefined => {
     let error;
     if (!value) {

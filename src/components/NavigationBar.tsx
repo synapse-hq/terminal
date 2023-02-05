@@ -9,13 +9,10 @@ import NextLink from "next/link";
 import React from "react";
 import Logo from "./Logo";
 import { useRouter } from "next/router"
+import { NavLinkProps } from "../types"
 
-interface Props {
-  children: React.ReactNode;
-  link: string;
-}
-
-const NavLink: React.FC<Props> = ({ link, children }) => {
+const NavLink: React.FC<NavLinkProps> = ({ link, children }) => {
+  console.log("NAV LINK", link)
   return (
     <NextLink href={link} passHref>
       <Link fontWeight="bold">{children}</Link>

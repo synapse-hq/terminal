@@ -14,16 +14,10 @@ import {
 
 import { Field, Form, Formik, FormikValues } from 'formik';
 
+import { SignInProps } from "../types"
 import Logo from './Logo';
 
-type Props = {
-  title: string,
-  validateUsername: (value: string) => string | undefined,
-  validatePassword: (value: string) => string | undefined,
-  handleFormSubmit: (values: FormikValues, actions: FormikValues) => void
-};
-
-const FormTemplate = ({ title, validateUsername, validatePassword, handleFormSubmit }: Props) => {
+const FormTemplate = ({ title, validateUsername, validatePassword, handleFormSubmit }: SignInProps) => {
   return (
     <Flex width='full' align='center' justifyContent='center'>
       <Box p={4} width={600}>

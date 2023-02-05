@@ -3,6 +3,10 @@ import { HStack, Icon, Heading } from '@chakra-ui/react'
 import { ArrowRightIcon } from '@chakra-ui/icons';
 
 const Logo = (props: any) => {
+  const handleClick = (e) => {
+    console.log("CLICKED")
+  }
+
   return (
     <HStack spacing='5'>
       <Icon as={ArrowRightIcon} fontSize="xl"/>

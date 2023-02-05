@@ -1,13 +1,7 @@
 import React from "react";
-import { ReactElement } from 'react';
 import { Box, SimpleGrid, VStack, Icon, Text, Flex, Heading } from '@chakra-ui/react';
 import { CheckIcon } from '@chakra-ui/icons';
-
-interface FeatureProps {
-  title: string;
-  text: string;
-  icon: ReactElement;
-}
+import { FeatureProps } from "../types"
 
 const Feature = ({ title, text, icon }: FeatureProps) => {
   return (

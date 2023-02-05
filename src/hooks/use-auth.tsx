@@ -6,6 +6,7 @@ import axios from "axios";
 import routes from "../constants/routes";
 
 import { UserState, Error } from "../types"
+import { authIsInitialized } from "../assertions";
 
 
 const authContext = createContext({});
@@ -74,7 +75,8 @@ export function useProviderAuth(): UserState {
       setUser(username)
       router.push("/dashboard/" + username)
     } catch(err) {
-      return
+      console.log("CHECK USER ERROR, CUSTOM HOOK EFFECT RAN", err)
+      router.push("/")
     }
   }
   

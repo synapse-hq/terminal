@@ -30,10 +30,10 @@ const ConnectionStatus = ({stale, updateRequests}: any) => {
   const symbol = stale ? "⭕" : "🔁"
   return (
     <>
-    <div className={"stale-requests-" + stale.toString()}> 
-      <h3>{msg}</h3>
-      <button disabled>{symbol}</button>
-    </div>
+      <div className={"stale-requests-" + stale.toString()}> 
+        <h3>{msg}</h3>
+        <button disabled>{symbol}</button>
+      </div>
 
       <button className="manual-request-retrieval" onClick={updateRequests}>Retrieve all requests</button>
   

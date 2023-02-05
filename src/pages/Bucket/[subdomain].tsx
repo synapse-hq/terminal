@@ -1,3 +1,4 @@
+import React from "react";
 import DashboardSidebar from "../../components/DashboardSidebar";
 
 import BucketView from "../../components/BucketView"
@@ -22,6 +23,8 @@ export default () => {
   }
 
   return (
-    <BucketView subdomain={subdomain}></BucketView>
+    <DashboardSidebar>
+        <BucketView subdomain={subdomain}></BucketView>
+    </DashboardSidebar>
   )
 }

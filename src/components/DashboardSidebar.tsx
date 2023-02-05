@@ -14,8 +14,6 @@ import {
   DrawerContent,
   Text,
   useDisclosure,
-  BoxProps,
-  FlexProps,
   Menu,
   MenuButton,
   MenuDivider,
@@ -27,17 +25,15 @@ import {
   FiBell,
   FiChevronDown,
 } from "react-icons/fi";
+
 import { FaBitbucket, FaFaucet, FaCog } from 'react-icons/fa'
-import { IconType } from "react-icons";
 import Logo from './Logo'
 import NextLink from "next/link";
 import { useAuth } from "../hooks/use-auth";
 import { authIsInitialized } from "../assertions"
 
-interface LinkItemProps {
-  name: string;
-  icon: IconType;
-}
+import { LinkItemProps, NavItemProps, SidebarProps, MobileProps } from "../types"
+
 const LinkItems: Array<LinkItemProps> = [
   { name: "Buckets", icon: FaBitbucket },
   { name: "Sources", icon: FaFaucet },
@@ -50,6 +46,7 @@ export default function SidebarWithHeader({
   children: ReactNode;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
       <SidebarContent
@@ -78,9 +75,6 @@ export default function SidebarWithHeader({
   );
 }
 
-interface SidebarProps extends BoxProps {
-  onClose: () => void;
-}
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   return (
@@ -110,9 +104,6 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   );
 };
 
-interface NavItemProps extends FlexProps {
-  icon: IconType;
-}
 const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
   return (
     <Link
@@ -149,22 +140,10 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
   );
 };
 
-interface MobileProps extends FlexProps {
-  onOpen: () => void;
-}
-
-
-type UserActions = {
-  user: string;
-  signIn: (username: string, password: string) => Promise<void | Error>;
-  signUp: (username: string, password: string) => Promise<void>;
-  signOut: () => Promise<void>;
-}
-
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const auth = useAuth();
 
-  const handleSignOut = async() => {
+  const handleSignOut = () => {
     try {
       authIsInitialized(auth);
       auth.signOut();

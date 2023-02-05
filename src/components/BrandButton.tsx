@@ -1,11 +1,7 @@
+import React from "react";
 import { Button } from "@chakra-ui/react";
-import { ReactNode } from "react";
 
-interface BrandButtonProps {
-  children: ReactNode;
-  type: "primary" | "secondary";
-  onClick: () => void;
-}
+import { BrandButtonProps } from "../types";
 
 const BrandButton = (props: BrandButtonProps) => {
   if (props.type === "secondary") {

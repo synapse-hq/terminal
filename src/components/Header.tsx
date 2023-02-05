@@ -2,12 +2,24 @@ import React from "react";
 
 import { Box, VStack, Heading, Text, HStack, Button } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
-import { useRouter } from "next/router"
+import { useRouter } from "next/router";
 import routes from "../constants/routes"
+import { useAuth } from "../hooks/use-auth";
+import { authIsInitialized } from "../assertions";
+
 
 const Header: React.FC = () => {
   const router = useRouter()
+  const auth = useAuth();
+
   const redirectToLogin = () => {
+    // authIsInitialized(auth);
+
+    // if (auth.user) {
+    //   router.push(`/dashboard/${auth.user}`)
+    // } else {
+    //   router.push("/sign-in")
+    // }
     router.push("/sign-in")
   }
   
