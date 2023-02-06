@@ -248,7 +248,6 @@ const BucketView = ({subdomain}: BucketViewProps) => {
     viewing = request
   }
 
-
   if (!access) {
     return (
       <Box>
@@ -262,7 +261,7 @@ const BucketView = ({subdomain}: BucketViewProps) => {
   
             </Inspector>
           <VStack w='100%'>
-            <Link href={`/dashboard/${auth.user}`}>Back to Buckets</Link>
+            <Link href={`/dashboard/me`}>Back to Buckets</Link>
             <BucketInfo subdomain={subdomain}></BucketInfo>
             <RequestView event={viewing}></RequestView>
           </VStack>
@@ -283,7 +282,7 @@ const BucketView = ({subdomain}: BucketViewProps) => {
 
           </Inspector>
         <VStack w='100%'>
-          <Link href={`/dashboard/${auth.user}`}>Back to Buckets</Link>
+          <Link href={`/dashboard/me`}>Back to Buckets</Link>
           <BucketInfo subdomain={subdomain}></BucketInfo>
           <RequestView event={viewing}></RequestView>
         </VStack>

@@ -252,10 +252,11 @@ const ShareForm = ({onUserSearch, buckets, notifyUserError, notifyUserSuccess} :
 
   const handleBucketSearch = (e : any) => {
     setShareBucket(e.target.value)
-    const filtered = buckets.filter((bucket: Bucket) => 
-      bucket.subdomain.startsWith(shareBucket)
+    let matches = buckets.filter((bucket: Bucket) => 
+      (bucket.subdomain.includes(shareBucket) || bucket.subdomain.startsWith(shareBucket))
     )
 
+    const filtered = matches.filter((bucket: Bucket) => !bucketSelections.find((selected: string) => selected === bucket.subdomain))
     setBucketResults(filtered.slice(0, 7))
   }
 
@@ -269,20 +270,19 @@ const ShareForm = ({onUserSearch, buckets, notifyUserError, notifyUserSuccess} :
   
 
   const confirmBucketSelections = async() => {
-    setShareBucket("")
-    setBucketResults([])
-
     if (confirm("Are you sure you want to share these buckets")) {
       const data = {shareUsers: userSelections, shareBuckets: bucketSelections}
       try {
         const res = await bucketService.shareBuckets(data)
         setBucketSelections([])
         setUserSelections([])
+
         setBucketResults([])
         setShareBucket("")
+
         setValidOption(false)
         notifyUserSuccess(`User(s) '${userSelections.join("' | '")}' \n\n\n have access to bucket(s): '${bucketSelections.join("' | '")}'`)
-
+        onUserSearch(false)
       } catch(err) {
         notifyUserError("Something went wrong")
       }
