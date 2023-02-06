@@ -11,6 +11,7 @@ export type SignInProps = {
 };
 
 export type Bucket = {
+  id: number,
   subdomain: string;
   owner: string;
   createdAt: string;
@@ -22,6 +23,16 @@ export type UserState = {
   signIn: (username: string, password: string) => Promise<void | Error>;
   signUp: (username: string, password: string) => Promise<void | Error>;
   signOut: () => Promise<void>;
+  checkUser: () => Promise<UserCheck>;
+}
+
+export type UserCheck = {
+  error: boolean,
+  data: string,
+}
+
+export type Data = {
+  data: string
 }
 
 export type Error = {
@@ -58,6 +69,31 @@ export interface FeatureProps {
 
 export interface BrandButtonProps {
   children: ReactNode;
-  type: "primary" | "secondary";
+  type: "primary" | "secondary" | "share";
   onClick: () => void;
+}
+
+export interface TestimonialCardProps {
+  id: number;
+  name: string;
+  role: string;
+  content: string;
+  avatar: string;
+  index: number;
+}
+
+export type ShareFormProps = {
+  onUserSearch: any,
+  buckets: Bucket[],
+  notifyUserError: any,
+  notifyUserSuccess: any,
+}
+
+export type UserResult = {
+  username: string,
+}
+
+export type ShareBucketReqProps = {
+  shareUsers: string[],
+  shareBuckets: string[]
 }

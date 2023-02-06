@@ -24,6 +24,8 @@ import axios from "axios"
 import useWebSocket from 'react-use-websocket';
 import { useRouter } from "next/router";
 import routes from '../constants/routes'
+import { useAuth } from "../hooks/use-auth";
+import { authIsInitialized } from "@/assertions";
 
 const ConnectionStatus = ({stale, updateRequests}: any) => {
   const msg = stale ? "Attempting to connect to endpoint to listen for requests" : "Listening for incoming requests" 
@@ -65,7 +67,7 @@ const Inspector = ({ events, view, stale, updateRequests }: any) => {
       <Heading>All Requests</Heading>
       <div id="event-scroll">
       {events.map((event: any) => 
-        <Text className="scroll-item" onClick={() => view(event.id)}>
+        <Text key={event.id} className="scroll-item" onClick={() => view(event.id)}>
           {formatEvent(event)}
         </Text>
       )}
@@ -127,9 +129,13 @@ const RequestView = ({ event }: any) => {
   
   const display = rawView ? "show" : "hide";
 
-  const showRaw = () => {
-    setRawView(!rawView)
-  }
+  const closeRawView = () => {
+    setRawView(false)
+  };
+
+  const openRawView = () => {
+    setRawView(true)
+  };
 
   return (
   <>
@@ -138,23 +144,28 @@ const RequestView = ({ event }: any) => {
       <Heading size='md'>Request details</Heading>
     </CardHeader>
     <CardBody>
-      <div>Method:  {event.method}</div>
-      <div>Path: {event.path}</div>
-      <div>Query:  {JSON.stringify(event.query)}</div>
-      
-      <div>Sent on:  {event.createdAt}</div>
-      <div>Source IP:  {event.clientIp}</div><br></br>
+    <div>Method:  {event.method}</div>
+        <div>Path: {event.path}</div>
+        <div>Query:  {JSON.stringify(event.query)}</div>
+        
+        <div>Sent on:  {event.createdAt}</div>
+        <div>Source IP:  {event.clientIp}</div><br></br>
 
 
-      <div>
-        <Heading size="xs">
-          See Raw Request {" "}
-          <button onClick={showRaw}>{rawView ? " 🔼" : " 🔽"}</button>
-        </Heading>
-      </div>
-      <div className={"raw-request-" + display}>
-        <PrettyPrintJSON data={event.rawRequest} />
-      </div>
+        <div>
+          <Heading size="xs">
+            See Raw Request {" "}
+            <button onClick={openRawView}>🔼</button>
+          </Heading>
+        </div>
+
+        <div className={`request-inspector-modal-${rawView ? "show" : ""}`}>
+          <button onClick={closeRawView}>❌</button>
+            <div className={"raw-request"}>
+              <PrettyPrintJSON data={event.rawRequest} />
+            </div>
+        </div>
+
     </CardBody>
   </Card>
   </>
@@ -167,12 +178,22 @@ type BucketViewProps = {
 }
 
 const BucketView = ({subdomain}: BucketViewProps) => {
+  let [access, setAccess] = useState(false)
   let [requests, setRequests] = useState<any[]>([])
   let [currentRequest, setCurrentRequest] = useState(-1)
   let [staleData, setStale] = useState(false)
   const router = useRouter()
+  const auth = useAuth();
+  
+  try {
+    authIsInitialized(auth)
+  } catch(err: any) {
+    console.log(err)
+    router.push("/")
+    return <></>;
+  }
 
-  const { sendMessage } = useWebSocket(routes.WEBSOCKET_URL, {
+  const { sendMessage } = useWebSocket(routes.BUCKET_WS_URL, {
     onOpen: () => {
       setStale(false)
       sendMessage(subdomain)
@@ -180,11 +201,9 @@ const BucketView = ({subdomain}: BucketViewProps) => {
       console.log('WebSocket connection established.');
     },
     onMessage: (e: any) => {
-      if (e.data) {
+      if (access && e.data) {
         const newRequest = JSON.parse(e.data)
         setRequests(requests.concat(newRequest))
-
-        console.log("DATA FROM WEBSOCKET", newRequest)
       }
     },
     onClose: (e: any) => {
@@ -194,16 +213,26 @@ const BucketView = ({subdomain}: BucketViewProps) => {
       setStale(true)
       return true
     },
-    reconnectAttempts: 10,
-    reconnectInterval: 5000,
+    reconnectAttempts: 20,
+    reconnectInterval: 50,
   });
-  
+
+
   const getRequests = async() => {
     try {
       const requests = await axios.get(routes.fetchBucketRequests(subdomain))
       setRequests(requests.data)
-    } catch (err) {
-      console.log(err)
+      setAccess(true)
+    } catch (error: any) {
+      if (error.response.status === 404) {
+        router.push(`/404`)
+        return <></>;
+      } 
+
+      if (error.response.status === 401) {
+        router.push("/");
+        return <></>;
+      }
     }
   }
 
@@ -219,6 +248,29 @@ const BucketView = ({subdomain}: BucketViewProps) => {
     viewing = request
   }
 
+
+  if (!access) {
+    return (
+      <Box>
+        <HStack align="start">
+          <Inspector 
+            events={[]} 
+            view={setCurrentRequest}
+            updateRequests={getRequests}
+            stale={staleData}  
+          >
+  
+            </Inspector>
+          <VStack w='100%'>
+            <Link href={`/dashboard/${auth.user}`}>Back to Buckets</Link>
+            <BucketInfo subdomain={subdomain}></BucketInfo>
+            <RequestView event={viewing}></RequestView>
+          </VStack>
+        </HStack>
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <HStack align="start">
@@ -231,7 +283,7 @@ const BucketView = ({subdomain}: BucketViewProps) => {
 
           </Inspector>
         <VStack w='100%'>
-          <Link href="/dashboard/me">Back to Buckets</Link>
+          <Link href={`/dashboard/${auth.user}`}>Back to Buckets</Link>
           <BucketInfo subdomain={subdomain}></BucketInfo>
           <RequestView event={viewing}></RequestView>
         </VStack>

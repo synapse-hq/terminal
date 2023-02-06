@@ -3,12 +3,23 @@ import Link from "next/link";
 import { Box, Heading, Text, Button } from "@chakra-ui/react";
 import BrandButton from "../components/BrandButton";
 import  {useRouter} from "next/router"
+import { useAuth } from "../hooks/use-auth"
+import { authIsInitialized } from "../assertions";
 
 export default function NotFound() {
   const router = useRouter()
+  const auth = useAuth();
+
   const returnHome = () => {
-    router.push("/dashboard/me")
+    authIsInitialized(auth)
+ 
+    if (auth.user !== "") {
+      router.push("/dashboard/" + auth.user)
+    } else {
+      router.push("/")
+    }
   }
+  
   return (
     <Box textAlign="center" py={10} px={6}>
       <Heading

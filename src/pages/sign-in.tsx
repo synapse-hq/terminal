@@ -10,17 +10,6 @@ import { authIsInitialized } from "../assertions"
 const SignIn = () => {
   const auth = useAuth();
   const router = useRouter();
-  
-  // useEffect(() => {
-  //   try {
-  //     authIsInitialized(auth);
-  //     if (auth.user) {
-  //       router.push(`/dashboard/${auth.user}`)
-  //     } 
-  //   } catch(err) {
-  //     console.log("ERROR", err)
-  //   }
-  // }, [])
 
   const validateUsername = (value: string): string | undefined => {
     let error;

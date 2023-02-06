@@ -12,10 +12,9 @@ import { useRouter } from "next/router"
 import { NavLinkProps } from "../types"
 
 const NavLink: React.FC<NavLinkProps> = ({ link, children }) => {
-  console.log("NAV LINK", link)
   return (
     <NextLink href={link} passHref>
-      <Link fontWeight="bold">{children}</Link>
+      <Link as="span" fontWeight="bold">{children}</Link>
     </NextLink>
   );
 };
@@ -32,15 +31,16 @@ const NavigationBar: React.FC = () => {
         <HStack spacing="10" fontSize="sm">
           <Logo />
           <Flex justify="space-between" flex="1">
-            <HStack as="ul" listStyleType="none"></HStack>
-            <HStack spacing="4">
-              <NavLink link="sign-in">Sign in</NavLink>
-              <NextLink href="#" passHref>
+            <HStack key="homepage-actions-formatter" as="ul" listStyleType="none"></HStack>
+            <HStack key="homepage-actions" spacing="4">
+              <NavLink key="sign-in" link="sign-in">Sign in</NavLink>
+
+              <NextLink key="get-started" href="#" passHref>
                 <Button
-                  as="a"
+                  as="button"
                   variant="outline"
                   _hover={{
-                    background: "transparent",
+                    background: "teal",
                     borderColor: "white",
                   }}
                   onClick={redirectToLogin}
@@ -48,6 +48,8 @@ const NavigationBar: React.FC = () => {
                   Get Started
                 </Button>
               </NextLink>
+
+
             </HStack>
           </Flex>
         </HStack>

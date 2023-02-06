@@ -13,13 +13,6 @@ const Header: React.FC = () => {
   const auth = useAuth();
 
   const redirectToLogin = () => {
-    // authIsInitialized(auth);
-
-    // if (auth.user) {
-    //   router.push(`/dashboard/${auth.user}`)
-    // } else {
-    //   router.push("/sign-in")
-    // }
     router.push("/sign-in")
   }
   

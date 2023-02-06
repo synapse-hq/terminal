@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Head from 'next/head'
 // import Image from 'next/image'
 // import styles from '../styles/Home.module.css'
@@ -11,7 +11,32 @@ import Testimonials from '../components/Testimonials'
 import Integrations from '../components/Integrations'
 import { Divider } from '@chakra-ui/react'
 
+import { useAuth } from "../hooks/use-auth";
+import { authIsInitialized } from "../assertions";
+import { useRouter } from "next/router";
+
+
 export default function Home() {
+  const auth = useAuth();
+  const router = useRouter()
+
+  const isLoggedIn = async() => {
+    try {
+      authIsInitialized(auth)
+      const res = await auth.checkUser()
+      if (res.error) {
+        return
+      }
+     router.push(`/dashboard/${res.data}`)
+    } catch(err) {
+      console.log("ERROR: auth not initialized", err);
+    }
+  }
+
+  useEffect(() => {
+    isLoggedIn()
+  }, [])
+  
   return (
     <>
       <Head>

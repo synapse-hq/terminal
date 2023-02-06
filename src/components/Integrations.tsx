@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 
 import {
   Heading,
@@ -44,7 +44,7 @@ const Integrations: React.FC = () => {
         <SimpleGrid columns={{ base: 1, md: 6 }} spacing={10}>
           {brands.map((brand) => {
             return (
-              <BrandCard>
+              <BrandCard key={brand.name}>
                 <Icon
                   color={brand.icon.color}
                   boxSize={12}

@@ -43,7 +43,7 @@ function DataTable<Data extends object>({
       <Tbody>
 
           {data.map(data =>
-            <Tr className="scroll-item">
+            <Tr className="scroll-item" key={data.id}>
               <>
                 <Td>
                   {data.subdomain}

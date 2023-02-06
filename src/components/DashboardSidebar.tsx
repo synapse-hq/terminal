@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   IconButton,
   Avatar,
@@ -50,7 +50,7 @@ export default function SidebarWithHeader({
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
       <SidebarContent
-        onClose={() => onClose}
+        onClose={onClose}
         display={{ base: "none", md: "block" }}
       />
       <Drawer
@@ -75,7 +75,6 @@ export default function SidebarWithHeader({
   );
 }
 
-
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   return (
     <Box
@@ -90,9 +89,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <NextLink href="/" >
           <Logo />
-        </NextLink>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
@@ -142,13 +139,14 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const auth = useAuth();
+  authIsInitialized(auth)
 
   const handleSignOut = () => {
     try {
       authIsInitialized(auth);
       auth.signOut();
     } catch (err) {
-      console.log("ERR", err)
+      console.log("ERROR", err)
     }
   }
 
@@ -171,6 +169,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         aria-label="open menu"
         icon={<FiMenu />}
       />
+
+      <Logo />
 
       <HStack spacing={{ base: "0", md: "6" }}>
         <IconButton
@@ -199,9 +199,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                   spacing="1px"
                   ml="2"
                 >
-                  <Text fontSize="sm">Justina Clark</Text>
+                  <Text fontSize="sm">{auth.user}</Text>
                   <Text fontSize="xs" color="gray.600">
-                    Admin
                   </Text>
                 </VStack>
                 <Box display={{ base: "none", md: "flex" }}>

@@ -1,13 +1,10 @@
-import { useState, useEffect, useContext, createContext } from "react"
-import React from "react"
+import React, { useState, useEffect, useContext, createContext } from "react"
 import { useRouter } from "next/router";
 
 import axios from "axios";
 import routes from "../constants/routes";
 
-import { UserState, Error } from "../types"
-import { authIsInitialized } from "../assertions";
-
+import { UserState, Error, UserCheck } from "../types"
 
 const authContext = createContext({});
 
@@ -30,7 +27,7 @@ export function useProviderAuth(): UserState {
         return {error: ""};
       }
       return {error: "Something went wrong"};
-    } catch(err) {
+    } catch(err: any) {
       console.log("ERR", err.response.data);
       return err.response.data;
     }
@@ -41,7 +38,6 @@ export function useProviderAuth(): UserState {
       const credentials = {username, passwordHash};
       const res = await axios.post(routes.SIGN_UP, credentials);
 
-      console.log("RES", res);
       console.log(res.data.username, username);
       if (res.data.username === username) {
         setUser(username);
@@ -51,7 +47,7 @@ export function useProviderAuth(): UserState {
         return  {error: "Something went wrong"};
       }
 
-    } catch(err) {
+    } catch(err: any) {
       console.log("ERR", err.response.data)
       return err.response.data;
     }
@@ -67,25 +63,21 @@ export function useProviderAuth(): UserState {
     }  
   }
 
-  const checkUser = async() => {
+  const checkUser = async() : Promise<UserCheck> => {
     try {
       const res: any = await axios.get(routes.SESSION_TEST)
       const username = res.data.username
-
       setUser(username)
-      router.push("/dashboard/" + username)
+      return {error: false, data: username}
     } catch(err) {
-      console.log("CHECK USER ERROR, CUSTOM HOOK EFFECT RAN", err)
-      router.push("/")
+      return {error: true, data: "User not logged in"}
     }
   }
-  
-  useEffect(() => {
-    checkUser()
-  }, [])
 
-  return {user, signIn, signOut, signUp}
+  return {user, signIn, signOut, signUp, checkUser}
 }
+
+
 
 export const useAuth = () : UserState | {} => {
   return useContext(authContext)
