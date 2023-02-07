@@ -1,9 +1,11 @@
-import FormTemplate from '@/components/FormTemplate';
+import React from "react";
+import FormTemplate from '../components/FormTemplate';
 import { FormikValues } from 'formik';
-import { useRouter } from 'next/router';
+import { useAuth } from "../hooks/use-auth";
+import { authIsInitialized } from "../assertions"
 
 const SingUp = () => {
-  const router = useRouter();
+  const auth = useAuth();
 
   const validateUsername = (value: string): string | undefined => {
     let error;
@@ -28,12 +30,9 @@ const SingUp = () => {
   const handleFormSubmit = (values: FormikValues, actions: FormikValues): void => {
     actions.setSubmitting(false);
 
-    let body = JSON.stringify({ username: values.username, passwordHash: values.password });
-    fetch('https://bruinooge.dev/api/users',
-      { method: 'POST', headers: { 'content-type': 'application/json' }, body })
-      .then(response => {
-        return response.json();
-      }).then(data => {
+    authIsInitialized(auth);
+    auth.signUp(values.username, values.password)
+      .then((data: any) => {
         let error = data.error;
         if (error) {
           let lowercasedError = error.toLowerCase();
@@ -46,10 +45,6 @@ const SingUp = () => {
             return;
           }
         }
-
-        router.push(`/dashboard/${data.username}`);
-      }).catch(error => {
-        console.log(error);
       });
   }
 

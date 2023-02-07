@@ -1,20 +1,18 @@
+import React, {useEffect} from "react";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import theme from "./theme";
-
+import theme from "../styles/theme";
 import { ChakraProvider } from "@chakra-ui/react";
-import { useState } from "react";
-import SessionContext from "../context/session";
+
+import { ProvideAuth } from "../hooks/use-auth";
 
 function App({ Component, pageProps }: AppProps) {
-  const [session, setSession] = useState("");
-
   return (
-    <SessionContext.Provider value={{ session, setSession }}>
+    <ProvideAuth>
       <ChakraProvider theme={theme}>
         <Component {...pageProps} />
       </ChakraProvider>
-    </SessionContext.Provider>
+    </ProvideAuth>
   );
 }
 

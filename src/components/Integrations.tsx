@@ -1,3 +1,5 @@
+import React, {useEffect} from "react";
+
 import {
   Heading,
   Box,
@@ -7,7 +9,7 @@ import {
   SimpleGrid,
   Icon,
 } from "@chakra-ui/react";
-import theme from "../pages/theme";
+import theme from "../styles/theme";
 import {
   FaGithub,
   FaSlack,
@@ -42,7 +44,7 @@ const Integrations: React.FC = () => {
         <SimpleGrid columns={{ base: 1, md: 6 }} spacing={10}>
           {brands.map((brand) => {
             return (
-              <BrandCard>
+              <BrandCard key={brand.name}>
                 <Icon
                   color={brand.icon.color}
                   boxSize={12}

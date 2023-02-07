@@ -1,39 +1,34 @@
+import React from "react"
+
 import { createColumnHelper } from "@tanstack/react-table";
 import DataTable from "./BucketDataTable";
-import { type Bucket } from './types';
-import { useEffect, useState } from 'react';
+import { type Bucket } from '../types';
 
 const columnHelper = createColumnHelper<Bucket>();
 
+
 const columns = [
-  columnHelper.accessor("name", {
+  columnHelper.accessor("subdomain", {
     cell: (info) => info.getValue(),
-    header: "Name",
+    header: "subdomain",
   }),
   columnHelper.accessor("owner", {
     cell: (info) => info.getValue(),
     header: "Owner",
   }),
-  columnHelper.accessor("updatedAt", {
+  columnHelper.accessor("createdAt", {
     cell: (info) => info.getValue(),
     header: "Updated At",
   }),
 ];
 
-const BucketsTable = () => {
-  const [buckets, setBuckets] = useState([]);
+type BucketTableProp = {
+  buckets: Bucket[],
+}
 
-  useEffect(() => {
-    fetch(`https://bruinooge.dev/api/buckets/mykolas555`, { method: 'GET' })
-      .then(response => {
-        return response.json();
-      }).then(data => {
-        setBuckets(data);
-      });
-  }, [])
-
+const BucketsTable = (props: BucketTableProp) => {
   return (
-    <DataTable columns={columns} data={buckets}></DataTable>
+    <DataTable columns={columns} data={props.buckets}></DataTable>
   )
 }
 

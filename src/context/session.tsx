@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 
-const SessionContext = createContext(undefined)
+const SessionContext = createContext({})
 
 export default SessionContext
 

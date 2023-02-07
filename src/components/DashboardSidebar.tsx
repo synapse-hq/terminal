@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   IconButton,
   Avatar,
@@ -14,8 +14,6 @@ import {
   DrawerContent,
   Text,
   useDisclosure,
-  BoxProps,
-  FlexProps,
   Menu,
   MenuButton,
   MenuDivider,
@@ -27,15 +25,15 @@ import {
   FiBell,
   FiChevronDown,
 } from "react-icons/fi";
+
 import { FaBitbucket, FaFaucet, FaCog } from 'react-icons/fa'
-import { IconType } from "react-icons";
 import Logo from './Logo'
 import NextLink from "next/link";
+import { useAuth } from "../hooks/use-auth";
+import { authIsInitialized } from "../assertions"
 
-interface LinkItemProps {
-  name: string;
-  icon: IconType;
-}
+import { LinkItemProps, NavItemProps, SidebarProps, MobileProps } from "../types"
+
 const LinkItems: Array<LinkItemProps> = [
   { name: "Buckets", icon: FaBitbucket },
   { name: "Sources", icon: FaFaucet },
@@ -48,10 +46,11 @@ export default function SidebarWithHeader({
   children: ReactNode;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
       <SidebarContent
-        onClose={() => onClose}
+        onClose={onClose}
         display={{ base: "none", md: "block" }}
       />
       <Drawer
@@ -76,10 +75,6 @@ export default function SidebarWithHeader({
   );
 }
 
-interface SidebarProps extends BoxProps {
-  onClose: () => void;
-}
-
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   return (
     <Box
@@ -94,9 +89,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <NextLink href="/" >
           <Logo />
-        </NextLink>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
@@ -108,9 +101,6 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   );
 };
 
-interface NavItemProps extends FlexProps {
-  icon: IconType;
-}
 const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
   return (
     <Link
@@ -147,12 +137,17 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
   );
 };
 
-interface MobileProps extends FlexProps {
-  onOpen: () => void;
-}
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+  const auth = useAuth();
+  authIsInitialized(auth)
+
   const handleSignOut = () => {
-    fetch('https://bruinooge.dev/api/users/logout', { method: 'POST', credentials: 'include' })
+    try {
+      authIsInitialized(auth);
+      auth.signOut();
+    } catch (err) {
+      console.log("ERROR", err)
+    }
   }
 
   return (
@@ -174,6 +169,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         aria-label="open menu"
         icon={<FiMenu />}
       />
+
+      <Logo />
 
       <HStack spacing={{ base: "0", md: "6" }}>
         <IconButton
@@ -202,9 +199,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                   spacing="1px"
                   ml="2"
                 >
-                  <Text fontSize="sm">Justina Clark</Text>
+                  <Text fontSize="sm">{auth.user}</Text>
                   <Text fontSize="xs" color="gray.600">
-                    Admin
                   </Text>
                 </VStack>
                 <Box display={{ base: "none", md: "flex" }}>

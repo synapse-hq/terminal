@@ -5,10 +5,16 @@ import {
   getCoreRowModel,
   ColumnDef,
 } from "@tanstack/react-table";
+import React from "react";
+
+import { type Bucket } from '../types';
+import Link from 'next/link';
+
+
 
 export type DataTableProps<Data extends object> = {
-  data: Data[];
-  columns: ColumnDef<Data, any>[];
+  data: Bucket[];
+  columns: ColumnDef<Bucket, any>[];
 };
 
 function DataTable<Data extends object>({
@@ -22,37 +28,42 @@ function DataTable<Data extends object>({
   });
 
   return (
-    <Table>
+    <div className="bucket-scroll">
+  <Table>
       <Thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <Tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => {
-              return (
-                <Th key={header.id}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                </Th>
-              );
-            })}
-          </Tr>
-        ))}
+        <Tr>
+          <Th>
+            Subdomain
+          </Th>
+          <Th>
+            Created On
+          </Th>
+        </Tr>
       </Thead>
       <Tbody>
-        {table.getRowModel().rows.map((row) => (
-          <Tr key={row.id}>
-            {row.getVisibleCells().map((cell) => {
-              return (
-                <Td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+
+          {data.map(data =>
+            <Tr className="scroll-item" key={data.id}>
+              <>
+                <Td>
+                  {data.subdomain}
                 </Td>
-              );
-            })}
-          </Tr>
-        ))}
+
+                <Td>
+                  {data.createdAt}
+                </Td>
+                
+                <Td>
+                  <Link  href={`/Bucket/${encodeURIComponent(data.subdomain)}`} className="inspect-bucket-link">
+                    View Bucket
+                  </Link>
+                </Td> 
+              </>
+            </Tr>
+          )}
       </Tbody>
     </Table>
+    </div>
   );
 }
 
